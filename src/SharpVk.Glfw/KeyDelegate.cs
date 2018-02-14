@@ -18,5 +18,5 @@
     /// <param name="modifiers">
     /// Bit field describing which modifier keys were held down.
     /// </param>
-    public delegate void KeyDelegate(WindowHandle window, Key key, int scanCode, InputAction action, Modifiers modifiers);
+    public delegate void KeyDelegate(WindowHandle window, Key key, int scanCode, InputAction action, Modifier modifiers);
 }

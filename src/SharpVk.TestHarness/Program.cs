@@ -1,5 +1,6 @@
 ﻿using SharpVk.Glfw;
 using System;
+using System.Diagnostics;
 
 namespace SharpVk
 {
@@ -16,9 +17,13 @@ namespace SharpVk
             {
                 Glfw3.Init();
 
-                using (var window = new Window(1024, 768, "Test"))
+                var callback = new CharDelegate((handle, codepoint) => Console.WriteLine(codepoint));
+
+                using (var window = new Window(1920, 1080, "Test"))
                 {
-                    while (window.GetKeyState(Key.Space) == InputAction.Release)
+                    Glfw3.SetCharCallback(window.RawHandle, callback);
+
+                    while (!window.ShouldClose)
                     {
                         Glfw3.PollEvents();
                     }

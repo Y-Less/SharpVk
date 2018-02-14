@@ -335,6 +335,12 @@ namespace SharpVk.Glfw
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetGamma")]
         public static extern void SetGamma(MonitorHandle monitor, float gamma);
 
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetInputMode")]
+        public static extern int GetInputMode(WindowHandle window, int mode);
+
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetInputMode")]
+        public static extern void SetInputMode(WindowHandle window, int mode, int value);
+
         /// <summary>
         /// Returns the localized name of the specified printable key. This is
         /// intended for displaying key bindings to the user.
@@ -353,10 +359,22 @@ namespace SharpVk.Glfw
         
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetKey")]
         public static extern InputAction GetKey(WindowHandle window, Key key);
-        
+
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetMouseButton")]
+        public static extern int GetMouseButton(WindowHandle window, int button);
+
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetCursorPos")]
+        public static extern int GetCursorPosition(WindowHandle window, out double xPosition, out double yPosition);
+
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetCursorPos")]
+        public static extern int SetCursorPosition(WindowHandle window, double xPosition, double yPosition);
+
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetKeyCallback")]
         public static extern KeyDelegate SetKeyCallback(WindowHandle window, KeyDelegate callback);
-        
+
+        [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetCharCallback")]
+        public static extern KeyDelegate SetCharCallback(WindowHandle window, CharDelegate callback);
+
         /// <summary>
         /// Returns an array of names of Vulkan instance extensions required by
         /// GLFW for creating Vulkan surfaces for GLFW windows. If successful,
