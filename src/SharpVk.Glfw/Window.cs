@@ -76,6 +76,24 @@ namespace SharpVk.Glfw
                 ErrorUtility.Unbind();
             }
         }
+
+        public InputAction GetMouseButtonState(int mouseButton)
+        {
+            try
+            {
+                ErrorUtility.Bind();
+
+                InputAction result = Glfw3.GetMouseButton(this.handle, mouseButton);
+
+                ErrorUtility.ThrowOnError();
+
+                return result;
+            }
+            finally
+            {
+                ErrorUtility.Unbind();
+            }
+        }
         
         /// <summary>
         /// Returns the value of the close flag for this window.
@@ -130,6 +148,6 @@ namespace SharpVk.Glfw
             this.Close();
         }
 
-        public WindowHandle RawHandle => this.handle;
+        public WindowHandle Handle => this.handle;
     }
 }

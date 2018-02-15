@@ -361,13 +361,13 @@ namespace SharpVk.Glfw
         public static extern InputAction GetKey(WindowHandle window, Key key);
 
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetMouseButton")]
-        public static extern int GetMouseButton(WindowHandle window, int button);
+        public static extern InputAction GetMouseButton(WindowHandle window, int button);
 
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwGetCursorPos")]
-        public static extern int GetCursorPosition(WindowHandle window, out double xPosition, out double yPosition);
+        public static extern void GetCursorPosition(WindowHandle window, out double xPosition, out double yPosition);
 
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetCursorPos")]
-        public static extern int SetCursorPosition(WindowHandle window, double xPosition, double yPosition);
+        public static extern void SetCursorPosition(WindowHandle window, double xPosition, double yPosition);
 
         [DllImport(GlfwDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "glfwSetKeyCallback")]
         public static extern KeyDelegate SetKeyCallback(WindowHandle window, KeyDelegate callback);
