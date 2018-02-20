@@ -12,6 +12,21 @@ namespace SharpVk.Shanq
 {
     internal class ShanqExpressionVisitor
     {
+        private static readonly Dictionary<Type, (Op TypeOp, int[] Operands)> primitiveTypeMapping = new Dictionary<Type, (Op, int[])>
+        {
+            [typeof(long)] = (Op.OpTypeInt, new[] { 64, 1 }),
+            [typeof(int)] = (Op.OpTypeInt, new[] { 32, 1 }),
+            [typeof(short)] = (Op.OpTypeInt, new[] { 16, 1 }),
+            [typeof(sbyte)] = (Op.OpTypeInt, new[] { 8, 1 }),
+            [typeof(ulong)] = (Op.OpTypeInt, new[] { 64, 0 }),
+            [typeof(uint)] = (Op.OpTypeInt, new[] { 32, 0 }),
+            [typeof(ushort)] = (Op.OpTypeInt, new[] { 16, 0 }),
+            [typeof(byte)] = (Op.OpTypeInt, new[] { 8, 0 }),
+            [typeof(double)] = (Op.OpTypeFloat, new[] { 64 }),
+            [typeof(float)] = (Op.OpTypeFloat, new[] { 32 }),
+            [typeof(void)] = (Op.OpTypeFloat, new int[0])
+        };
+
         private readonly SpirvFile file;
         private readonly IVectorTypeLibrary vectorLibrary;
 
@@ -74,7 +89,7 @@ namespace SharpVk.Shanq
                 [(typeof(float), typeof(int))] = Op.OpConvertFToS,
                 [(typeof(float), typeof(uint))] = Op.OpConvertFToU,
                 [(typeof(int), typeof(float))] = Op.OpConvertSToF,
-                [(typeof(uint), typeof(float))] = Op.OpConvertSToF,
+                [(typeof(uint), typeof(float))] = Op.OpConvertUToF,
                 [(typeof(int), typeof(uint))] = Op.OpSConvert,
                 [(typeof(uint), typeof(int))] = Op.OpUConvert,
             };
@@ -490,17 +505,9 @@ namespace SharpVk.Shanq
 
                 return new SpirvStatement(Op.OpTypeStruct, fieldTypeIds);
             }
-            else if (value == typeof(float))
+            else if (primitiveTypeMapping.TryGetValue(value, out var mapping))
             {
-                return new SpirvStatement(Op.OpTypeFloat, 32);
-            }
-            else if (value == typeof(int))
-            {
-                return new SpirvStatement(Op.OpTypeInt, 32, 1);
-            }
-            else if (value == typeof(void))
-            {
-                return new SpirvStatement(Op.OpTypeVoid);
+                return new SpirvStatement(mapping.TypeOp, mapping.Operands);
             }
             else if (value.IsValueType)
             {
