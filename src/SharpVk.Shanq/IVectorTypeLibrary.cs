@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SharpVk.Shanq
 {
@@ -15,5 +16,9 @@ namespace SharpVk.Shanq
         bool IsVectorType(Type type);
 
         bool IsMatrixType(Type type);
+
+        IEnumerable<int> GetSwizzle(Type type, string name);
+
+        Format GetVectorFormat(Type type);
     }
 }

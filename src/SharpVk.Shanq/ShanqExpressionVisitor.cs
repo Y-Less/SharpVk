@@ -135,8 +135,10 @@ namespace SharpVk.Shanq
 
                     return sampleId;
                 }
-
-                throw new NotImplementedException();
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
             else
             {
@@ -255,6 +257,17 @@ namespace SharpVk.Shanq
 
             ResultId left = this.Visit(expression.Left);
             ResultId right = this.Visit(expression.Right);
+
+            if (this.vectorLibrary.IsVectorType(expression.Left.Type) && !this.vectorLibrary.IsVectorType(expression.Right.Type))
+            {
+                int length = this.vectorLibrary.GetVectorLength(expression.Left.Type);
+
+                var statement = new SpirvStatement(Op.OpCompositeConstruct, Enumerable.Repeat<object>(right, length).ToArray());
+                right = this.file.GetNextResultId();
+
+                this.file.AddFunctionStatement(right, statement);
+            }
+
             ResultId result = this.file.GetNextResultId();
 
             this.file.AddFunctionStatement(result, binaryOp, resultTypeId, left, right);
@@ -279,39 +292,24 @@ namespace SharpVk.Shanq
                 {
                     GetMemberData(expression, out string name, out var type);
 
-                    int fieldIndex;
+                    var fieldIndices = this.vectorLibrary.GetSwizzle(type, name);
 
-                    switch (name)
+                    if (fieldIndices.Count() == 1)
                     {
-                        case "x":
-                        case "r":
-                            fieldIndex = 0;
-                            break;
-                        case "y":
-                        case "g":
-                            fieldIndex = 1;
-                            break;
-                        case "z":
-                        case "b":
-                            fieldIndex = 2;
-                            break;
-                        case "w":
-                        case "a":
-                            fieldIndex = 3;
-                            break;
-                        default:
-                            throw new Exception($"Unsupported field: {name}");
+                        ResultId targetId = this.Visit(expression.Expression);
+
+                        ResultId typeId = this.Visit(Expression.Constant(type));
+
+                        ResultId accessId = this.file.GetNextResultId();
+
+                        this.file.AddFunctionStatement(accessId, Op.OpCompositeExtract, typeId, targetId, fieldIndices.First());
+
+                        return accessId;
                     }
-
-                    ResultId targetId = this.Visit(expression.Expression);
-
-                    ResultId typeId = this.Visit(Expression.Constant(type));
-
-                    ResultId accessId = this.file.GetNextResultId();
-
-                    this.file.AddFunctionStatement(accessId, Op.OpCompositeExtract, typeId, targetId, fieldIndex);
-
-                    return accessId;
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
                 else
                 {
