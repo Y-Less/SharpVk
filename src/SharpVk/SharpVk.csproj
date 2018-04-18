@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>FacticiusVir</Authors>
     <Company />
-    <Version>0.4.3-dev</Version>
+    <Version>0.4.3-dev2</Version>
     <Description>C# Bindings for the Vulkan API</Description>
     <PackageLicenseUrl>https://github.com/FacticiusVir/SharpVk/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/FacticiusVir/SharpVk</PackageProjectUrl>

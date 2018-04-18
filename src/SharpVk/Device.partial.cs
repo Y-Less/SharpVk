@@ -37,6 +37,7 @@
 
             Interop.WriteDescriptorSet info = new Interop.WriteDescriptorSet
             {
+                SType = StructureType.WriteDescriptorSet,
                 BufferInfo = marshalledInfos,
                 DestinationSet = destinationSet.handle,
                 DestinationBinding = destinationBinding,
@@ -84,6 +85,7 @@
 
             Interop.WriteDescriptorSet info = new Interop.WriteDescriptorSet
             {
+                SType = StructureType.WriteDescriptorSet,
                 ImageInfo = marshalledInfos,
                 DestinationSet = destinationSet.handle,
                 DestinationBinding = destinationBinding,
@@ -131,6 +133,7 @@
 
             Interop.WriteDescriptorSet info = new Interop.WriteDescriptorSet
             {
+                SType = StructureType.WriteDescriptorSet,
                 TexelBufferView = marshalledViews,
                 DestinationSet = destinationSet.handle,
                 DestinationBinding = destinationBinding,
