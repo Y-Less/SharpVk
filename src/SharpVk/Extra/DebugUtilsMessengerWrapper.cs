@@ -33,6 +33,7 @@ namespace SharpVk.Extra
         /// </summary>
         public delegate bool Delegate(SharpVk.Multivendor.DebugUtilsMessageSeverityFlags messageSeverity, SharpVk.Multivendor.DebugUtilsMessageTypeFlags messageTypes, SharpVk.Multivendor.DebugUtilsMessengerCallbackData pCallbackData);
 
+        private readonly Delegate callback_;
         private readonly System.Runtime.InteropServices.GCHandle gch_;
 
         private static unsafe Bool32 DebugUtilsMessengerWrapperCallback(SharpVk.Multivendor.DebugUtilsMessageSeverityFlags messageSeverity, SharpVk.Multivendor.DebugUtilsMessageTypeFlags messageTypes, IntPtr pCallbackData, IntPtr pUserData)
@@ -43,14 +44,14 @@ namespace SharpVk.Extra
             }
 
             System.Runtime.InteropServices.GCHandle gch = System.Runtime.InteropServices.GCHandle.FromIntPtr(pUserData);
-            Delegate callback = (Delegate)gch.Target;
+            DebugUtilsMessengerWrapper callback = (DebugUtilsMessengerWrapper)gch.Target;
             if (callback == null)
             {
                 return false;
             }
 
             SharpVk.Multivendor.DebugUtilsMessengerCallbackData userData = SharpVk.Multivendor.DebugUtilsMessengerCallbackData.MarshalFrom((SharpVk.Interop.Multivendor.DebugUtilsMessengerCallbackData*)pCallbackData.ToPointer());
-            return callback(messageSeverity, messageTypes, userData);
+            return callback.callback_(messageSeverity, messageTypes, userData) && callback.ValidationLayerTesting;
         }
 
         /// <summary>
@@ -76,7 +77,8 @@ namespace SharpVk.Extra
         /// <param name="flags"></param>
         public DebugUtilsMessengerWrapper(Delegate callback, SharpVk.Multivendor.DebugUtilsMessageSeverityFlags messageSeverity, SharpVk.Multivendor.DebugUtilsMessageTypeFlags messageType, SharpVk.Multivendor.DebugUtilsMessengerCreateFlags? flags = null)
         {
-            gch_ = System.Runtime.InteropServices.GCHandle.Alloc(callback);
+            callback_ = callback;
+            gch_ = System.Runtime.InteropServices.GCHandle.Alloc(this);
             Flags = flags;
             MessageSeverity = messageSeverity;
             MessageType = messageType;
