@@ -19,22 +19,20 @@ namespace SharpVk.Extra
         public static ArrayProxy<T> AddUnique<T>(this ArrayProxy<T> proxy, T elem)
         {
             int len = proxy.Length;
+            for (int i = 0; i != len; ++i)
+            {
+                if (proxy[i].Equals(elem))
+                {
+                    return proxy;
+                }
+            }
             var ret = new T[len + 1];
-            bool found = false;
             for (int i = 0; i != len; ++i)
             {
                 ret[i] = proxy[i];
-                found = found || proxy[i].Equals(elem);
             }
-            if (found)
-            {
-                return proxy;
-            }
-            else
-            {
-                ret[len] = elem;
-                return ret;
-            }
+            ret[len] = elem;
+            return ret;
         }
     }
 }
