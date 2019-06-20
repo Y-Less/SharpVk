@@ -23,6 +23,7 @@ namespace SharpVk.Extra
         /// </summary>
         public delegate bool Delegate(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, HostSize location, int messageCode, string pLayerPrefix, string pMessage);
 
+        private readonly Delegate callback_;
         private readonly System.Runtime.InteropServices.GCHandle gch_;
 
         private static unsafe Bool32 DebugReportCallbackWrapperCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, HostSize location, int messageCode, string pLayerPrefix, string pMessage, IntPtr pUserData)
@@ -33,13 +34,13 @@ namespace SharpVk.Extra
             }
 
             System.Runtime.InteropServices.GCHandle gch = System.Runtime.InteropServices.GCHandle.FromIntPtr(pUserData);
-            Delegate callback = (Delegate)gch.Target;
+            DebugReportCallbackWrapper callback = (DebugReportCallbackWrapper)gch.Target;
             if (callback == null)
             {
                 return false;
             }
 
-            return callback(flags, objectType, @object, location, messageCode, pLayerPrefix, pMessage);
+            return callback.callback_(flags, objectType, @object, location, messageCode, pLayerPrefix, pMessage) && callback.ValidationLayerTesting;
         }
 
         /// <summary>
@@ -63,7 +64,8 @@ namespace SharpVk.Extra
         /// <param name="flags"></param>
         public DebugReportCallbackWrapper(Delegate callback, SharpVk.Multivendor.DebugReportFlags? flags = null)
         {
-            gch_ = System.Runtime.InteropServices.GCHandle.Alloc(callback);
+            callback_ = callback;
+            gch_ = System.Runtime.InteropServices.GCHandle.Alloc(this);
             Flags = flags;
             Enabled = false;
         }

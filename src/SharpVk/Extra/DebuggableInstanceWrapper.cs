@@ -13,6 +13,12 @@ namespace SharpVk.Extra
         public bool Enabled { get; set; }
 
         /// <summary>
+        /// Set to `true` to allow returning `true` from debug callbacks.  Default (`false`)
+        /// disables this feature, mainly used for internal testing to abort actions.
+        /// </summary>
+        public bool ValidationLayerTesting { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public Instance Instance { get; set; }
