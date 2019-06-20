@@ -27,22 +27,24 @@
         /// </param>
         /// <param name="validationFlagsExt">
         /// </param>
+        /// <param name="debugUtilsMessengerCreateInfoExt">
+        /// </param>
         /// <param name="allocator">
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public static unsafe SharpVk.Instance Create(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.DebugReportCallbackCreateInfo? debugReportCallbackCreateInfoExt = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public static unsafe SharpVk.Instance Create(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.DebugReportCallbackCreateInfo? debugReportCallbackCreateInfoExt = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, SharpVk.Multivendor.DebugUtilsMessengerCreateInfo? debugUtilsMessengerCreateInfoExt = null, AllocationCallbacks? allocator = null)
         {
             var cache = new CommandCache(new SharpVk.Interop.NativeLibrary());
             cache.Initialise();
 
-            return Instance.Create(cache, enabledLayerNames, enabledExtensionNames, flags, applicationInfo, debugReportCallbackCreateInfoExt, validationFlagsExt, allocator: allocator);
+            return Instance.Create(cache, enabledLayerNames, enabledExtensionNames, flags, applicationInfo, debugReportCallbackCreateInfoExt, validationFlagsExt, debugUtilsMessengerCreateInfoExt, allocator);
         }
 
         /// <summary>
         /// Returns up to requested number of global extension properties.
         /// </summary>
-        public static unsafe SharpVk.ExtensionProperties[] EnumerateExtensionProperties(string layerName)
+        public static unsafe SharpVk.ExtensionProperties[] EnumerateExtensionProperties(string layerName = null)
         {
             var cache = new CommandCache(new SharpVk.Interop.NativeLibrary());
             cache.Initialise();
