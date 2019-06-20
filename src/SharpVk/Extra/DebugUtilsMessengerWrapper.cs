@@ -161,21 +161,21 @@ namespace SharpVk.Extra
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public unsafe SharpVk.Instance GetOrCreate(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public unsafe void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
         {
-            if (Instance == null)
+            if (Instance != null)
             {
-                if (Enabled)
-                {
-                    Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugUtils), flags, applicationInfo, null, validationFlagsExt, this, allocator);
-                    Debugger = Instance.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
-                }
-                else
-                {
-                    Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
-                }
+                return;
             }
-            return Instance;
+            else if (Enabled)
+            {
+                Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugUtils), flags, applicationInfo, null, validationFlagsExt, this, allocator);
+                Debugger = Instance.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
+            }
+            else
+            {
+                Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+            }
         }
     }
 }
