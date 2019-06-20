@@ -6,22 +6,12 @@ namespace SharpVk.Extra
     /// <summary>
     /// 
     /// </summary>
-    public class DebugReportCallbackWrapper : IDisposable
+    public class DebugReportCallbackWrapper : DebuggableInstanceWrapper
     {
         /// <summary>
         /// 
         /// </summary>
         public SharpVk.Multivendor.DebugReportFlags? Flags { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Instance Instance { get; set; }
 
         /// <summary>
         /// 
@@ -55,7 +45,7 @@ namespace SharpVk.Extra
         /// <summary>
         /// 
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             Debugger?.Dispose();
             Debugger = null;
@@ -70,10 +60,8 @@ namespace SharpVk.Extra
         /// 
         /// </summary>
         /// <param name="callback"></param>
-        /// <param name="messageSeverity"></param>
-        /// <param name="messageType"></param>
         /// <param name="flags"></param>
-        public DebugReportCallbackWrapper(Delegate callback, SharpVk.Multivendor.DebugUtilsMessageSeverityFlags messageSeverity, SharpVk.Multivendor.DebugUtilsMessageTypeFlags messageType, SharpVk.Multivendor.DebugReportFlags? flags = null)
+        public DebugReportCallbackWrapper(Delegate callback, SharpVk.Multivendor.DebugReportFlags? flags = null)
         {
             gch_ = System.Runtime.InteropServices.GCHandle.Alloc(callback);
             Flags = flags;
@@ -146,7 +134,7 @@ namespace SharpVk.Extra
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public unsafe void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public unsafe override void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
         {
             if (Instance != null)
             {
