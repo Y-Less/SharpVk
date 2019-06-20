@@ -6,7 +6,7 @@ namespace SharpVk.Extra
     /// <summary>
     /// 
     /// </summary>
-    public class DebugUtilsMessengerWrapper : IDisposable
+    public class DebugUtilsMessengerWrapper : DebuggableInstanceWrapper
     {
         /// <summary>
         /// 
@@ -22,16 +22,6 @@ namespace SharpVk.Extra
         /// 
         /// </summary>
         public SharpVk.Multivendor.DebugUtilsMessageTypeFlags MessageType { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Instance Instance { get; set; }
 
         /// <summary>
         /// 
@@ -66,7 +56,7 @@ namespace SharpVk.Extra
         /// <summary>
         /// 
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             Debugger?.Dispose();
             Debugger = null;
@@ -161,7 +151,7 @@ namespace SharpVk.Extra
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public unsafe void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public override unsafe void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
         {
             if (Instance != null)
             {
