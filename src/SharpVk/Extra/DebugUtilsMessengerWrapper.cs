@@ -6,43 +6,37 @@ namespace SharpVk.Extra
     /// <summary>
     /// 
     /// </summary>
-    public class DebugUtilsMessengerWrapper
+    public class DebugUtilsMessengerWrapper : IDisposable
     {
         /// <summary>
         /// 
         /// </summary>
-        public SharpVk.Multivendor.DebugUtilsMessengerCreateFlags? Flags
-        {
-            get;
-            set;
-        }
+        public SharpVk.Multivendor.DebugUtilsMessengerCreateFlags? Flags { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public SharpVk.Multivendor.DebugUtilsMessageSeverityFlags MessageSeverity
-        {
-            get;
-            set;
-        }
+        public SharpVk.Multivendor.DebugUtilsMessageSeverityFlags MessageSeverity { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public SharpVk.Multivendor.DebugUtilsMessageTypeFlags MessageType
-        {
-            get;
-            set;
-        }
+        public SharpVk.Multivendor.DebugUtilsMessageTypeFlags MessageType { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool Enabled
-        {
-            get;
-            set;
-        }
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Instance Instance { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DebugUtilsMessenger Debugger { get; set; }
 
         /// <summary>
         /// 
@@ -74,7 +68,13 @@ namespace SharpVk.Extra
         /// </summary>
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Debugger?.Dispose();
+            Debugger = null;
+
+            Instance?.Dispose();
+            Instance = null;
+
+            gch_.Free();
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace SharpVk.Extra
         /// </summary>
         ~DebugUtilsMessengerWrapper()
         {
-            gch_.Free();
+            Dispose();
         }
 
         /// <summary>
@@ -114,6 +114,24 @@ namespace SharpVk.Extra
                 UserCallback = DebugUtilsMessengerWrapperCallback,
                 UserData = System.Runtime.InteropServices.GCHandle.ToIntPtr(that.gch_)
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="that"></param>
+        public static implicit operator SharpVk.Multivendor.DebugUtilsMessenger(DebugUtilsMessengerWrapper that)
+        {
+            return that.Debugger;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="that"></param>
+        public static implicit operator SharpVk.Instance(DebugUtilsMessengerWrapper that)
+        {
+            return that.Instance;
         }
 
         /// <summary>
@@ -143,15 +161,21 @@ namespace SharpVk.Extra
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public unsafe SharpVk.Instance CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public unsafe SharpVk.Instance GetOrCreate(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
         {
-            if (Enabled)
+            if (Instance == null)
             {
-                SharpVk.Instance result = Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugUtils), flags, applicationInfo, null, validationFlagsExt, this, allocator);
-                result.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
-                return result;
+                if (Enabled)
+                {
+                    Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugUtils), flags, applicationInfo, null, validationFlagsExt, this, allocator);
+                    Debugger = Instance.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
+                }
+                else
+                {
+                    Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+                }
             }
-            return Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+            return Instance;
         }
     }
 }

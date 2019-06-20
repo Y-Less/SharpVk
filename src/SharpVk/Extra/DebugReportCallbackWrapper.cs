@@ -6,25 +6,27 @@ namespace SharpVk.Extra
     /// <summary>
     /// 
     /// </summary>
-    public class DebugReportCallbackWrapper
+    public class DebugReportCallbackWrapper : IDisposable
     {
         /// <summary>
         /// 
         /// </summary>
-        public SharpVk.Multivendor.DebugReportFlags? Flags
-        {
-            get;
-            set;
-        }
+        public SharpVk.Multivendor.DebugReportFlags? Flags { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool Enabled
-        {
-            get;
-            set;
-        }
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Instance Instance { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DebugReportCallback Debugger { get; set; }
 
         /// <summary>
         /// 
@@ -55,7 +57,13 @@ namespace SharpVk.Extra
         /// </summary>
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Debugger?.Dispose();
+            Debugger = null;
+
+            Instance?.Dispose();
+            Instance = null;
+
+            gch_.Free();
         }
 
         /// <summary>
@@ -77,7 +85,7 @@ namespace SharpVk.Extra
         /// </summary>
         ~DebugReportCallbackWrapper()
         {
-            gch_.Free();
+            Dispose();
         }
 
         /// <summary>
@@ -91,6 +99,24 @@ namespace SharpVk.Extra
                 Callback = DebugReportCallbackWrapperCallback,
                 UserData = System.Runtime.InteropServices.GCHandle.ToIntPtr(that.gch_)
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="that"></param>
+        public static implicit operator SharpVk.Multivendor.DebugReportCallback(DebugReportCallbackWrapper that)
+        {
+            return that.Debugger;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="that"></param>
+        public static implicit operator SharpVk.Instance(DebugReportCallbackWrapper that)
+        {
+            return that.Instance;
         }
 
         /// <summary>
@@ -122,13 +148,19 @@ namespace SharpVk.Extra
         /// </param>
         public unsafe SharpVk.Instance CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
         {
-            if (Enabled)
+            if (Instance == null)
             {
-                SharpVk.Instance result = Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, null, allocator);
-                result.CreateDebugReportCallback(DebugReportCallbackWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
-                return result;
+                if (Enabled)
+                {
+                    Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, null, allocator);
+                    Debugger = Instance.CreateDebugReportCallback(DebugReportCallbackWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
+                }
+                else
+                {
+                    Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+                }
             }
-            return Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+            return Instance;
         }
     }
 }
