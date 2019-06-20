@@ -16,4 +16,3 @@ namespace SharpVk.Multivendor
         }
     }
 }
-
