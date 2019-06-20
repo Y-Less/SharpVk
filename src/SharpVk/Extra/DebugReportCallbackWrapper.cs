@@ -124,21 +124,7 @@ namespace SharpVk.Extra
         {
             if (Enabled)
             {
-                var extensionsIn = enabledExtensionNames.GetValueOrDefault();
-                int len = extensionsIn.Length;
-                var extensionsOut = new string[len + 1];
-                bool found = false;
-                for (int i = 0; i != len ; ++i)
-                {
-                    extensionsOut[i] = extensionsIn[i];
-                    found = found || extensionsIn[i] == SharpVk.Multivendor.ExtExtensions.DebugReport;
-                }
-                if (!found)
-                {
-                    extensionsOut[len] = SharpVk.Multivendor.ExtExtensions.DebugReport;
-                }
-
-                SharpVk.Instance result = Instance.Create(enabledLayerNames, found ? extensionsIn : extensionsOut, flags, applicationInfo, this, validationFlagsExt, null, allocator);
+                SharpVk.Instance result = Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, null, allocator);
                 result.CreateDebugReportCallback(DebugReportCallbackWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
                 return result;
             }
