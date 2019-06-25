@@ -43,6 +43,9 @@ namespace SharpVk.Extra
             return callback.callback_(flags, objectType, @object, location, messageCode, pLayerPrefix, pMessage) && callback.ValidationLayerTesting;
         }
 
+        private static SharpVk.Multivendor.DebugReportCallbackDelegate
+            DebugReportCallbackDelegate = DebugReportCallbackWrapperCallback;
+
         /// <summary>
         /// 
         /// </summary>
@@ -86,7 +89,7 @@ namespace SharpVk.Extra
         {
             return new SharpVk.Multivendor.DebugReportCallbackCreateInfo {
                 Flags = that.Flags,
-                Callback = DebugReportCallbackWrapperCallback,
+                Callback = DebugReportCallbackDelegate,
                 UserData = System.Runtime.InteropServices.GCHandle.ToIntPtr(that.gch_)
             };
         }
@@ -145,7 +148,7 @@ namespace SharpVk.Extra
             else if (Enabled)
             {
                 Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, null, allocator);
-                Debugger = Instance.CreateDebugReportCallback(DebugReportCallbackWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
+                Debugger = Instance.CreateDebugReportCallback(DebugReportCallbackDelegate, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
             }
             else
             {

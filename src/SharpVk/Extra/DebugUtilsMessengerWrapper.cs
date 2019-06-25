@@ -54,6 +54,9 @@ namespace SharpVk.Extra
             return callback.callback_(messageSeverity, messageTypes, userData) && callback.ValidationLayerTesting;
         }
 
+        private static SharpVk.Multivendor.DebugUtilsMessengerCallbackDelegate
+            DebugUtilsMessengerCallbackDelegate = DebugUtilsMessengerWrapperCallback;
+
         /// <summary>
         /// 
         /// </summary>
@@ -103,7 +106,7 @@ namespace SharpVk.Extra
                 Flags = that.Flags,
                 MessageSeverity = that.MessageSeverity,
                 MessageType = that.MessageType,
-                UserCallback = DebugUtilsMessengerWrapperCallback,
+                UserCallback = DebugUtilsMessengerCallbackDelegate,
                 UserData = System.Runtime.InteropServices.GCHandle.ToIntPtr(that.gch_)
             };
         }
@@ -162,7 +165,7 @@ namespace SharpVk.Extra
             else if (Enabled)
             {
                 Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugUtils), flags, applicationInfo, null, validationFlagsExt, this, allocator);
-                Debugger = Instance.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerWrapperCallback, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
+                Debugger = Instance.CreateDebugUtilsMessenger(MessageSeverity, MessageType, DebugUtilsMessengerCallbackDelegate, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
             }
             else
             {
