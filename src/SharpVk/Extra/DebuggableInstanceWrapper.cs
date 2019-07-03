@@ -31,8 +31,9 @@ namespace SharpVk.Extra
         /// <param name="flags"></param>
         /// <param name="applicationInfo"></param>
         /// <param name="validationFlagsExt"></param>
+        /// <param name="validationFeaturesExt"></param>
         /// <param name="allocator"></param>
-        public unsafe abstract void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null);
+        public unsafe abstract void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, SharpVk.Multivendor.ValidationFeatures? validationFeaturesExt = null, AllocationCallbacks? allocator = null);
 
         /// <summary>
         /// 

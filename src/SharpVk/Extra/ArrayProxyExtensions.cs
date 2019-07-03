@@ -7,7 +7,7 @@ namespace SharpVk.Extra
     /// <summary>
     /// 
     /// </summary>
-    public static class ArrayProxyExtensions
+    internal static class ArrayProxyExtensions
     {
         /// <summary>
         /// 
@@ -16,7 +16,7 @@ namespace SharpVk.Extra
         /// <param name="proxy"></param>
         /// <param name="elem"></param>
         /// <returns></returns>
-        public static ArrayProxy<T> AddUnique<T>(this ArrayProxy<T> proxy, T elem)
+        internal static ArrayProxy<T> AddUnique<T>(this ArrayProxy<T> proxy, T elem)
         {
             int len = proxy.Length;
             for (int i = 0; i != len; ++i)

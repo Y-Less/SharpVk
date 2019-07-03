@@ -135,11 +135,12 @@ namespace SharpVk.Extra
         /// </param>
         /// <param name="validationFlagsExt">
         /// </param>
+        /// <param name="validationFeaturesExt"></param>
         /// <param name="allocator">
         /// An optional AllocationCallbacks instance that controls host memory
         /// allocation.
         /// </param>
-        public unsafe override void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, AllocationCallbacks? allocator = null)
+        public unsafe override void CreateInstance(ArrayProxy<string>? enabledLayerNames, ArrayProxy<string>? enabledExtensionNames, SharpVk.InstanceCreateFlags? flags = null, SharpVk.ApplicationInfo? applicationInfo = null, SharpVk.Multivendor.ValidationFlags? validationFlagsExt = null, SharpVk.Multivendor.ValidationFeatures? validationFeaturesExt = null, AllocationCallbacks? allocator = null)
         {
             if (Instance != null)
             {
@@ -147,12 +148,12 @@ namespace SharpVk.Extra
             }
             else if (Enabled)
             {
-                Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, null, allocator);
+                Instance = SharpVk.Instance.Create(enabledLayerNames.GetValueOrDefault().AddUnique("VK_LAYER_KHRONOS_validation"), enabledExtensionNames.GetValueOrDefault().AddUnique(SharpVk.Multivendor.ExtExtensions.DebugReport), flags, applicationInfo, this, validationFlagsExt, validationFeaturesExt, null, allocator);
                 Debugger = Instance.CreateDebugReportCallback(DebugReportCallbackDelegate, Flags, System.Runtime.InteropServices.GCHandle.ToIntPtr(gch_), allocator);
             }
             else
             {
-                Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, null, allocator);
+                Instance = SharpVk.Instance.Create(enabledLayerNames, enabledExtensionNames, flags, applicationInfo, null, validationFlagsExt, validationFeaturesExt, null, allocator);
             }
         }
     }
